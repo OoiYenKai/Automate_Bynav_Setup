@@ -37,22 +37,16 @@ def load_commands(file_path):
 
 def send(command, ser):
     try:
-        if isinstance(command, list):
-            for cmd in command:
-                logging.info(f"Sending command: {cmd}")
-                ser.write((cmd + '\n').encode('utf-8'))
-                time.sleep(1)
-                response = ser.read_all().decode('utf-8').strip()
-                logging.info(f"Response: \n{response}")
-        elif command == "RTK_command":
-            # Handle dynamic input for RTK setup
-            username = input("Enter username: ").strip()
-            password = input("Enter password: ").strip()
-            rtk_command = f"NTRIPCONFIG NCOM1 CLIENT V1 199.184.151.36:2101 RTK_SNUS_32 {username} {password} ALL"
-            logging.info(f"Sending command: {rtk_command}")
-            ser.write((rtk_command + '\n').encode('utf-8'))
+        for cmd in command:
+            if command == "RTK_command":
+                # Handle dynamic input for RTK setup
+                username = input("Enter username: ").strip()
+                password = input("Enter password: ").strip()
+                cmd = f"NTRIPCONFIG NCOM1 CLIENT V1 199.184.151.36:2101 RTK_SNUS_32 {username} {password} ALL"
+            logging.info(f"Sending command: {cmd}")
+            ser.write((cmd + "\n").encode("utf-8"))
             time.sleep(1)
-            response = ser.read_all().decode('utf-8').strip()
+            response = ser.read_all().decode("utf-8").strip()
             logging.info(f"Response: \n{response}")
     except serial.SerialException as e:
         logging.error(f"Error sending command '{command}': {e}")
